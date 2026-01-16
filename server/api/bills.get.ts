@@ -1,12 +1,11 @@
 import { eq } from "drizzle-orm";
-import { getServerSession } from "#auth";
 import { useDb } from "../db/client";
 import { bills, billParticipants } from "../db/schema";
 
 export default defineEventHandler(async (event) => {
-  const session = await getServerSession(event);
+  const session = await requireUserSession(event);
   
-  const userId = (session?.user as any)?.id as string | undefined;
+  const userId = session.user.id as string | undefined;
   if (!userId) {
     setResponseStatus(event, 401);
     return { error: "Unauthorized" };

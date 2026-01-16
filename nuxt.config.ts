@@ -5,7 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ["@sidebase/nuxt-auth", "shadcn-nuxt"],
+  modules: ["nuxt-auth-utils", "shadcn-nuxt"],
 
   css: ["~/assets/css/main.css"],
 
@@ -36,16 +36,11 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Private keys (only available on server-side)
-    authSecret: process.env.NUXT_AUTH_SECRET,
-    // Public keys (exposed to client-side)
-    public: {
-      authOrigin: process.env.AUTH_ORIGIN || process.env.NUXT_PUBLIC_AUTH_ORIGIN,
+    oauth: {
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      },
     },
-  },
-
-  auth: {
-    provider: { type: "authjs" },
-    baseURL: "/api/auth",
-    trustHost: true,
   },
 })

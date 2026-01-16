@@ -9,7 +9,7 @@
         type="button"
         @click="handleGoogle"
         :disabled="loading"
-        class="mb-3 inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none disabled:opacity-60"
+        class="mb-3 inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
       >
         <img
           src="/public/google.favicon.svg"
@@ -31,26 +31,20 @@
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
 
+const { loggedIn } = useUserSession();
 const loading = ref(false);
-const { status, signIn } = useAuth();
 
-// If already logged in, bounce to home (or /app)
+// If already logged in, bounce to home
 watchEffect(() => {
-  if (status.value === "authenticated") {
+  if (loggedIn.value) {
     navigateTo("/");
   }
 });
 
-async function handleGoogle() {
-  try {
-    loading.value = true;
-    // NuxtAuth provider id is "google"
-    await signIn("google", { callbackUrl: "/" });
-  } finally {
-    // In most flows you'll be redirected before this runs,
-    // but keep it for completeness.
-    loading.value = false;
-  }
+function handleGoogle() {
+  loading.value = true;
+  // Redirect to OAuth endpoint (full page redirect for OAuth flow)
+  window.location.href = "/api/auth/google";
 }
 </script>
 

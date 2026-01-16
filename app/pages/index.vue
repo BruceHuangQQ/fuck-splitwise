@@ -3,11 +3,11 @@
     <!-- Header with avatar -->
     <div class="mb-6 flex items-center justify-between">
       <h1 class="text-3xl font-semibold tracking-tight">Welcome to Fuck Splitwise</h1>
-      <div v-if="data?.user" class="flex items-center gap-3">
-        <Avatar v-if="data.user">
-          <AvatarImage :src="(data.user as any).image" :alt="data.user.name || data.user.email || 'User'" />
+      <div v-if="user" class="flex items-center gap-3">
+        <Avatar v-if="user">
+          <AvatarImage :src="(user as any).image" :alt="user.name || user.email || 'User'" />
           <AvatarFallback>
-            {{ getInitials(data.user.name || data.user.email || 'U') }}
+            {{ getInitials(user.name || user.email || 'U') }}
           </AvatarFallback>
         </Avatar>
       </div>
@@ -15,18 +15,18 @@
     
     <div class="bg-gray-100 p-6 rounded-lg border border-gray-300">
       <p class="mb-4 text-gray-600">
-        Auth Status: <strong class="font-semibold">{{ status || 'unknown' }}</strong>
+        Auth Status: <strong class="font-semibold">{{ loggedIn ? 'authenticated' : 'not authenticated' }}</strong>
       </p>
       
-      <div v-if="status === 'loading'" class="text-gray-500">
+      <div v-if="!ready" class="text-gray-500">
         <p>Loading authentication...</p>
       </div>
-      <div v-else-if="data?.user" class="text-gray-800">
+      <div v-else-if="user" class="text-gray-800">
         <p class="mb-4">
-          Logged in as: <strong class="font-semibold">{{ data.user.email }}</strong>
+          Logged in as: <strong class="font-semibold">{{ user.email }}</strong>
         </p>
         <p class="mb-4">
-          Username: <strong class="font-semibold">{{ data.user.name }}</strong>
+          Username: <strong class="font-semibold">{{ user.name }}</strong>
         </p>
         <button
           type="button"
@@ -38,7 +38,7 @@
         </button>
       </div>
       <div v-else class="text-gray-600">
-        <p>No user data available. Status: {{ status }}</p>
+        <p>No user data available.</p>
       </div>
     </div>
   </div>
@@ -48,7 +48,7 @@
 import { ref } from "vue";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-const { data, status, signOut } = useAuth();
+const { loggedIn, user, ready, clear } = useUserSession();
 const loading = ref(false);
 
 function getInitials(name: string): string {
@@ -70,7 +70,8 @@ function getInitials(name: string): string {
 async function handleLogout() {
   try {
     loading.value = true;
-    await signOut({ callbackUrl: "/login" });
+    await clear();
+    await navigateTo("/login");
   } finally {
     loading.value = false;
   }
