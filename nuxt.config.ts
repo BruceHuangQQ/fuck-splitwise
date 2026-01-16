@@ -44,13 +44,8 @@ export default defineNuxtConfig({
   },
 
   auth: {
-    // Use Auth.js provider (the "NextAuth-like" mode)
-    provider: {
-      type: "authjs",
-    },
-    // Set origin from environment variable for production
-    origin: process.env.AUTH_ORIGIN || process.env.NUXT_PUBLIC_AUTH_ORIGIN,
-    // Set baseURL to prevent recursion errors
-    baseURL: process.env.AUTH_ORIGIN ? `${process.env.AUTH_ORIGIN}/api/auth` : undefined,
+    provider: { type: "authjs" },
+    baseURL: "/api/auth",
+    trustHost: true,
   },
 })
