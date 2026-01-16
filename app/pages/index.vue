@@ -5,7 +5,7 @@
       <h1 class="text-3xl font-semibold tracking-tight">Welcome to Fuck Splitwise</h1>
       <div v-if="user" class="flex items-center gap-3">
         <Avatar v-if="user">
-          <AvatarImage :src="(user as any).image" :alt="user.name || user.email || 'User'" />
+          <AvatarImage v-if="user.image" :src="user.image" :alt="user.name || user.email || 'User'" />
           <AvatarFallback>
             {{ getInitials(user.name || user.email || 'U') }}
           </AvatarFallback>

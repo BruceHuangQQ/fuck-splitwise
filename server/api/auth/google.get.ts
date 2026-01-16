@@ -32,11 +32,15 @@ export default defineOAuthGoogleEventHandler({
       dbUser = existingUser[0];
     }
 
+    // Google OAuth returns 'picture' for the profile image URL
+    const profileImage = (user as any).picture || (user as any).avatar_url || undefined;
+
     await setUserSession(event, {
       user: {
         id: dbUser.id,
         email: dbUser.email,
         name: dbUser.displayName,
+        image: profileImage,
       },
       loggedInAt: new Date(),
     });

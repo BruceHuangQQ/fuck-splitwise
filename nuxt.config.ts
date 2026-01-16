@@ -36,6 +36,9 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Private keys (only available on server-side)
+    session: {
+      password: process.env.NUXT_SESSION_PASSWORD || '',
+    },
     oauth: {
       google: {
         clientId: process.env.GOOGLE_CLIENT_ID,
