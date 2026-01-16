@@ -8,6 +8,13 @@
       "when": 1768487575411,
       "tag": "0000_panoramic_hercules",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1768541071082,
+      "tag": "0001_loud_lionheart",
+      "breakpoints": true
     }
   ]
 }
