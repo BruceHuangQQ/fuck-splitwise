@@ -1,6 +1,17 @@
 <template>
   <div class="min-h-screen p-8">
-    <h1 class="mb-6 text-3xl font-semibold tracking-tight">Welcome to Fuck Splitwise</h1>
+    <!-- Header with avatar -->
+    <div class="mb-6 flex items-center justify-between">
+      <h1 class="text-3xl font-semibold tracking-tight">Welcome to Fuck Splitwise</h1>
+      <div v-if="data?.user" class="flex items-center gap-3">
+        <Avatar v-if="data.user">
+          <AvatarImage :src="(data.user as any).image" :alt="data.user.name || data.user.email || 'User'" />
+          <AvatarFallback>
+            {{ getInitials(data.user.name || data.user.email || 'U') }}
+          </AvatarFallback>
+        </Avatar>
+      </div>
+    </div>
     
     <div class="bg-gray-100 p-6 rounded-lg border border-gray-300">
       <p class="mb-4 text-gray-600">
@@ -35,9 +46,26 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const { data, status, signOut } = useAuth();
 const loading = ref(false);
+
+function getInitials(name: string): string {
+  if (!name) return "U";
+  const parts = name.trim().split(/\s+/).filter(p => p.length > 0);
+  if (parts.length >= 2) {
+    const firstPart = parts[0];
+    const lastPart = parts[parts.length - 1];
+    if (firstPart && lastPart && firstPart[0] && lastPart[0]) {
+      return (firstPart[0] + lastPart[0]).toUpperCase();
+    }
+  }
+  if (name.length >= 2) {
+    return name.substring(0, 2).toUpperCase();
+  }
+  return name.substring(0, 1).toUpperCase() || "U";
+}
 
 async function handleLogout() {
   try {
