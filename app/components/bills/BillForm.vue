@@ -47,9 +47,9 @@
           :key="index"
           class="flex gap-3 items-end"
         >
-          <div class="flex-1">
+          <div class="w-64">
             <Select v-model="participant.userId" required :disabled="isSubmitting">
-              <SelectTrigger>
+              <SelectTrigger class="w-full">
                 <SelectValue placeholder="Select user" />
               </SelectTrigger>
                <SelectContent>
@@ -240,6 +240,9 @@ function validate(): boolean {
 
   for (let i = 0; i < formData.value.participants.length; i++) {
     const p = formData.value.participants[i]
+    if (!p) {
+      continue
+    }
     if (!p.userId) {
       errors.value.participants = 'All participants must have a user selected'
       break
