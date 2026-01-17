@@ -1,5 +1,6 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="space-y-6">
+  <div class="min-h-[100dvh] pb-24 md:pb-0">
+    <form @submit.prevent="handleSubmit" class="space-y-6">
     <Field>
       <FieldLabel>Title</FieldLabel>
       <Input
@@ -95,7 +96,7 @@
         variant="outline"
         @click="addParticipant"
         :disabled="isSubmitting"
-        class="sticky top-4 md:static z-10"
+        class="hidden md:flex"
       >
         <Plus class="h-4 w-4 mr-2" />
         Add Participant
@@ -124,7 +125,17 @@
         <span v-else>{{ isEdit ? 'Update' : 'Create' }}</span>
       </Button>
     </div>
-  </form>
+    </form>
+    <Button
+      type="button"
+      variant="outline"
+      @click="addParticipant"
+      :disabled="isSubmitting"
+      class="fixed right-6 z-50 rounded-full shadow-lg h-14 w-14 flex items-center justify-center md:hidden bottom-[calc(env(safe-area-inset-bottom)+1.5rem)]"
+    >
+      <Plus class="h-5 w-5" />
+    </Button>
+  </div>
 </template>
 
 <script setup lang="ts">
