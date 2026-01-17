@@ -15,6 +15,13 @@
       "when": 1768541071082,
       "tag": "0001_loud_lionheart",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768656517447,
+      "tag": "0002_clumsy_shinobi_shaw",
+      "breakpoints": true
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { pgTable, text, uuid, timestamp, numeric } from "drizzle-orm/pg-core";
+import { pgTable, text, uuid, timestamp, numeric, primaryKey } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -20,4 +20,6 @@ export const billParticipants = pgTable("bill_participants", {
   billId: uuid("bill_id").notNull(),
   userId: uuid("user_id").notNull(),
   amountOwed: numeric("amount_owed", { precision: 12, scale: 2 }).notNull(),
-});
+}, (table) => ({
+  pk: primaryKey({ columns: [table.billId, table.userId] }),
+}));

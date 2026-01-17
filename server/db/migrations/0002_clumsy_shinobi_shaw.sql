@@ -1,0 +1,1 @@
+ALTER TABLE "bill_participants" ADD CONSTRAINT "bill_participants_bill_id_user_id_pk" PRIMARY KEY("bill_id","user_id");
