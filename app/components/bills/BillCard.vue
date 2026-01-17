@@ -1,5 +1,8 @@
 <template>
-  <div class="rounded-lg border border-border bg-card p-6 shadow-sm hover:shadow-md transition-shadow">
+  <div
+    class="rounded-lg border border-border bg-card p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+    @click="$emit('click', bill.id)"
+  >
     <div class="flex items-start justify-between mb-4">
       <div class="flex-1">
         <h3 class="text-lg font-semibold text-card-foreground mb-1">
@@ -50,6 +53,10 @@ export interface Bill {
 const props = defineProps<{
   bill: Bill
   type: 'owedToMe' | 'iOwe'
+}>()
+
+defineEmits<{
+  click: [billId: string]
 }>()
 
 const formattedAmount = computed(() => {

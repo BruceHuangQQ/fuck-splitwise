@@ -13,7 +13,16 @@ export default defineEventHandler(async (event) => {
   const db = useDb();
 
   const owns = await db.select().from(bills).where(eq(bills.ownerUserId, userId));
-  const owes = await db.select().from(billParticipants).where(eq(billParticipants.userId, userId));
+  
+  // Select billParticipants with explicit fields to ensure correct property names
+  const owes = await db
+    .select({
+      billId: billParticipants.billId,
+      userId: billParticipants.userId,
+      amountOwed: billParticipants.amountOwed,
+    })
+    .from(billParticipants)
+    .where(eq(billParticipants.userId, userId));
 
   return { owns, owes };
 });
