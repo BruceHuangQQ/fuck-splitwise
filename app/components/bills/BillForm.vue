@@ -95,6 +95,7 @@
         variant="outline"
         @click="addParticipant"
         :disabled="isSubmitting"
+        class="sticky top-4 md:static z-10"
       >
         <Plus class="h-4 w-4 mr-2" />
         Add Participant
