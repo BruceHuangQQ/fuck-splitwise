@@ -7,6 +7,15 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["nuxt-auth-utils", "shadcn-nuxt"],
 
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' },
+      ],
+    },
+  },
+
   css: ["~/assets/css/main.css"],
 
   alias: {

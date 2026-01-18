@@ -4,7 +4,14 @@
     <div class="flex-shrink-0 px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 md:pt-8 pb-4 sm:pb-6 bg-background">
       <!-- Title and Avatar -->
       <div class="mb-4 sm:mb-6 flex items-center justify-between">
-        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">Fuck Splitwise</h1>
+        <div class="flex items-center gap-3">
+          <img
+            src="/logo.svg"
+            alt="Fuck Splitwise Logo"
+            class="h-8 w-8 sm:h-10 sm:w-10"
+          />
+          <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">Fuck Splitwise</h1>
+        </div>
         <div v-if="user" class="flex items-center gap-3">
           <Button
             variant="outline"
@@ -70,7 +77,7 @@
     <!-- Floating Action Button (only on owedToMe tab) -->
     <Button
       v-if="activeTab === 'owedToMe'"
-      class="fixed right-4 sm:right-6 md:right-8 bottom-4 sm:bottom-6 md:bottom-8 z-50 rounded-full shadow-lg h-14 w-14 flex items-center justify-center"
+      class="absolute right-4 sm:right-6 md:right-8 bottom-4 sm:bottom-6 md:bottom-8 z-50 rounded-full shadow-lg h-14 w-14 flex items-center justify-center"
       size="icon"
       @click="handleCreate"
     >

@@ -1,9 +1,16 @@
 <template>
   <div class="min-h-screen flex items-center justify-center px-6">
     <div class="w-full max-w-sm">
-      <h1 class="mb-6 text-3xl font-semibold tracking-tight">
-        Sign in to Fuck Splitwise
-      </h1>
+      <div class="mb-6 flex flex-col items-center gap-4">
+        <img
+          src="/logo.svg"
+          alt="Fuck Splitwise Logo"
+          class="h-16 w-16"
+        />
+        <h1 class="text-3xl font-semibold tracking-tight text-center">
+          Sign in to Fuck Splitwise
+        </h1>
+      </div>
 
       <button
         type="button"
@@ -12,7 +19,7 @@
         class="mb-3 inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
       >
         <img
-          src="/public/google.favicon.svg"
+          src="/google.favicon.svg"
           alt="Google"
           width="18"
           height="18"
@@ -21,7 +28,7 @@
         {{ loading ? "Signing in..." : "Continue with Google" }}
       </button>
 
-      <p class="text-xs text-gray-500">
+      <p class="text-sm text-gray-500 text-center">
         By continuing, you agree to our terms and acknowledge our privacy policy.
       </p>
     </div>
