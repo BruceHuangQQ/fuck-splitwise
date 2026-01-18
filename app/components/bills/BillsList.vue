@@ -29,7 +29,7 @@
 
     <!-- Create/Edit Bill Dialog -->
     <Dialog v-model:open="formDialogOpen">
-      <DialogContent class="max-w-[calc(100%-1rem)] sm:max-w-lg md:max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto">
+      <DialogContent class="max-w-[calc(100%-0.5rem)] sm:max-w-lg md:max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>{{ editingBillId ? 'Edit Bill' : 'Create New Bill' }}</DialogTitle>
           <DialogDescription>

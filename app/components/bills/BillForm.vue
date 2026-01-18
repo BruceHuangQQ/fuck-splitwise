@@ -45,9 +45,9 @@
         <div
           v-for="(participant, index) in formData.participants"
           :key="index"
-          class="flex gap-3 items-end"
+          class="flex gap-2 sm:gap-3 items-end"
         >
-          <div class="w-48">
+          <div class="w-36 sm:w-48 flex-1 sm:flex-none">
             <Select v-model="participant.userId" required :disabled="isSubmitting">
               <SelectTrigger class="w-full">
                 <SelectValue placeholder="Select user" />
@@ -68,7 +68,7 @@
                </SelectContent>
             </Select>
           </div>
-          <div class="w-32">
+          <div class="w-24 sm:w-32 flex-shrink-0">
             <Input
               v-model="participant.amountOwed"
               type="number"
