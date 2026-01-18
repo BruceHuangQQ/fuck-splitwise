@@ -78,6 +78,7 @@ import { ref, computed, watch } from 'vue'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Edit, Trash2 } from 'lucide-vue-next'
+import { useBills } from '@/composables/useBills'
 
 export interface BillParticipant {
   userId: string
@@ -108,6 +109,7 @@ const emit = defineEmits<{
 }>()
 
 const { user } = useUserSession()
+const { optimisticallyRemoveBill } = useBills()
 const bill = ref<BillDetails | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -177,13 +179,26 @@ async function handleDelete() {
   }
 
   isDeleting.value = true
+  let rollback: (() => void) | null = null
+
   try {
+    // Optimistic update: remove bill immediately
+    rollback = optimisticallyRemoveBill(bill.value.id)
+
+    // Delete from server
     await $fetch(`/api/bills/${bill.value.id}`, {
       method: 'DELETE'
     })
+
+    // Success - emit event and close
     emit('deleted')
     close()
+    rollback = null // Clear rollback since we succeeded
   } catch (err: any) {
+    // Rollback optimistic update on error
+    if (rollback) {
+      rollback()
+    }
     alert(err.data?.error || 'Failed to delete bill')
     console.error('Failed to delete bill:', err)
   } finally {

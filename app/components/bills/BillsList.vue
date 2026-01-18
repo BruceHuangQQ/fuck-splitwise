@@ -24,7 +24,6 @@
       :open="detailsDialogOpen"
       @update:open="detailsDialogOpen = $event"
       @edit="handleEdit"
-      @deleted="handleBillDeleted"
     />
 
     <!-- Create/Edit Bill Dialog -->
@@ -49,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import BillCard from './BillCard.vue'
 import BillDetailsDialog from './BillDetailsDialog.vue'
@@ -57,11 +56,37 @@ import BillForm from './BillForm.vue'
 import type { BillFormData } from './BillForm.vue'
 import { useBills } from '@/composables/useBills'
 
+interface User {
+  id: string
+  email: string
+  displayName: string
+}
+
 const props = defineProps<{
   type: 'owedToMe' | 'iOwe'
 }>()
 
-const { loading, owedToMeBills, iOweBills, fetchBills } = useBills()
+const { 
+  loading, 
+  owedToMeBills, 
+  iOweBills, 
+  fetchBills,
+  optimisticallyAddBill,
+  optimisticallyUpdateBill,
+  optimisticallyRemoveBill,
+  replaceTempBillWithRealBill,
+  fetchUserDetails
+} = useBills()
+
+const users = ref<User[]>([])
+
+onMounted(async () => {
+  try {
+    users.value = await $fetch<User[]>('/api/users')
+  } catch (error) {
+    console.error('Failed to fetch users:', error)
+  }
+})
 
 const bills = computed(() => {
   return props.type === 'owedToMe' ? owedToMeBills.value : iOweBills.value
@@ -111,9 +136,43 @@ async function handleEdit(billId: string) {
 
 async function handleFormSubmit(data: BillFormData) {
   isSubmittingBill.value = true
+  let rollback: (() => void) | null = null
+
   try {
+    // Get user info for participants
+    const participantsWithUserInfo = await Promise.all(
+      data.participants.map(async (p) => {
+        const user = users.value.find(u => u.id === p.userId) || await fetchUserDetails(p.userId)
+        if (!user) {
+          throw new Error(`User not found: ${p.userId}`)
+        }
+        return {
+          userId: p.userId,
+          amountOwed: p.amountOwed,
+          email: user.email,
+          displayName: user.displayName,
+        }
+      })
+    )
+
+    const { user } = useUserSession()
+    if (!user.value?.id) {
+      throw new Error('User not authenticated')
+    }
+
     if (editingBillId.value) {
-      // Update existing bill
+      // Optimistic update for edit
+      rollback = optimisticallyUpdateBill(
+        editingBillId.value,
+        {
+          title: data.title,
+          totalAmount: data.totalAmount,
+          dueDate: data.dueDate || null,
+        },
+        participantsWithUserInfo
+      )
+
+      // Update existing bill - no refresh needed, optimistic state is already correct
       await $fetch(`/api/bills/${editingBillId.value}`, {
         method: 'PUT',
         body: {
@@ -126,9 +185,23 @@ async function handleFormSubmit(data: BillFormData) {
           }))
         }
       })
+      // Keep optimistic state - no refresh needed
     } else {
+      // Optimistic update for create
+      const tempId = `temp-${Date.now()}`
+      rollback = optimisticallyAddBill(
+        {
+          id: tempId,
+          ownerUserId: user.value.id,
+          title: data.title,
+          totalAmount: data.totalAmount,
+          dueDate: data.dueDate || null,
+        },
+        participantsWithUserInfo
+      )
+
       // Create new bill
-      await $fetch('/api/bills', {
+      const response = await $fetch<{ success: boolean; bill: { id: string; createdAt: string; dueDate: string | null; totalAmount: string } }>('/api/bills', {
         method: 'POST',
         body: {
           title: data.title,
@@ -140,22 +213,28 @@ async function handleFormSubmit(data: BillFormData) {
           }))
         }
       })
+
+      // Replace temp ID with real server data (ID, createdAt, dueDate, totalAmount)
+      // This syncs the optimistic bill with the actual server response
+      if (response.bill) {
+        replaceTempBillWithRealBill(tempId, response.bill)
+      }
     }
     
     formDialogOpen.value = false
     editingBillId.value = null
     formInitialData.value = undefined
-    await fetchBills() // Refresh the list
+    rollback = null // Clear rollback since we succeeded
   } catch (error: any) {
     console.error('Failed to save bill:', error)
+    // Rollback optimistic update on error
+    if (rollback) {
+      rollback()
+    }
     alert(error.data?.error || 'Failed to save bill')
   } finally {
     isSubmittingBill.value = false
   }
-}
-
-function handleBillDeleted() {
-  fetchBills() // Refresh the list
 }
 
 defineExpose({

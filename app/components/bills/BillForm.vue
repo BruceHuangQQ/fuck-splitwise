@@ -54,7 +54,7 @@
               </SelectTrigger>
                <SelectContent>
                  <SelectItem
-                   v-for="user in users"
+                   v-for="user in getAvailableUsers(index)"
                    :key="user.id"
                    :value="user.id"
                  >
@@ -213,6 +213,16 @@ function truncateEmail(email: string, maxLength: number = 20): string {
   return email.substring(0, maxLength) + '...'
 }
 
+function getAvailableUsers(currentIndex: number): User[] {
+  // Get all selected user IDs except the current one
+  const selectedUserIds = formData.value.participants
+    .map((p, idx) => idx !== currentIndex && p.userId ? p.userId : null)
+    .filter((id): id is string => id !== null)
+  
+  // Return users that haven't been selected in other participant fields
+  return users.value.filter(user => !selectedUserIds.includes(user.id))
+}
+
 function validate(): boolean {
   errors.value = {}
 
@@ -236,6 +246,17 @@ function validate(): boolean {
 
   if (Math.abs(totalParticipantAmount - amount) > 0.01) {
     errors.value.participants = `Participant amounts (${totalParticipantAmount.toFixed(2)}) must equal total amount (${amount.toFixed(2)})`
+  }
+
+  // Check for duplicate participants
+  const userIds = formData.value.participants
+    .map(p => p.userId)
+    .filter(id => id) // Filter out empty strings
+  
+  const uniqueUserIds = new Set(userIds)
+  if (userIds.length !== uniqueUserIds.size) {
+    errors.value.participants = 'Each participant can only be added once'
+    return false
   }
 
   for (let i = 0; i < formData.value.participants.length; i++) {
