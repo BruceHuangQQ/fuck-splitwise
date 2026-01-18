@@ -65,18 +65,48 @@
           </Button>
         </div>
       </div>
-
-      <DialogFooter>
-        <Button variant="outline" @click="close">Close</Button>
-      </DialogFooter>
     </DialogContent>
   </Dialog>
+
+  <!-- Delete Confirmation Alert Dialog -->
+  <AlertDialog v-model:open="showDeleteConfirm">
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Delete Bill</AlertDialogTitle>
+        <AlertDialogDescription>
+          Are you sure you want to delete this bill? This action cannot be undone.
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogAction @click="confirmDelete" :disabled="isDeleting" :class="buttonVariants({ variant: 'destructive' })">
+          {{ isDeleting ? 'Deleting...' : 'Delete' }}
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+
+  <!-- Error Alert Dialog -->
+  <AlertDialog v-model:open="showErrorDialog">
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Error</AlertDialogTitle>
+        <AlertDialogDescription>
+          {{ errorMessage }}
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogAction @click="showErrorDialog = false">OK</AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Edit, Trash2 } from 'lucide-vue-next'
 import { useBills } from '@/composables/useBills'
 
@@ -114,6 +144,9 @@ const bill = ref<BillDetails | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 const isDeleting = ref(false)
+const showDeleteConfirm = ref(false)
+const showErrorDialog = ref(false)
+const errorMessage = ref('')
 
 const isOpen = computed({
   get: () => props.open,
@@ -173,8 +206,15 @@ function handleEdit() {
   }
 }
 
-async function handleDelete() {
-  if (!bill.value || !confirm('Are you sure you want to delete this bill? This action cannot be undone.')) {
+function handleDelete() {
+  if (!bill.value) {
+    return
+  }
+  showDeleteConfirm.value = true
+}
+
+async function confirmDelete() {
+  if (!bill.value) {
     return
   }
 
@@ -191,6 +231,7 @@ async function handleDelete() {
     })
 
     // Success - emit event and close
+    showDeleteConfirm.value = false
     emit('deleted')
     close()
     rollback = null // Clear rollback since we succeeded
@@ -199,7 +240,8 @@ async function handleDelete() {
     if (rollback) {
       rollback()
     }
-    alert(err.data?.error || 'Failed to delete bill')
+    errorMessage.value = err.data?.error || 'Failed to delete bill'
+    showErrorDialog.value = true
     console.error('Failed to delete bill:', err)
   } finally {
     isDeleting.value = false
