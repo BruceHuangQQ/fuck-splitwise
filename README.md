@@ -1,75 +1,72 @@
-# Nuxt Minimal Starter
+# Fuck Splitwise
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+![Banner](public/banner-bigger.png)
 
-## Setup
+**Splitwise really sucks.**
 
-Make sure to install dependencies:
+I genuinely don't understand why some of my friends insist on using it every time we need to split bills. The UX is clunky, things feel slow, half the features are paywalled, and somehow something as simple as "who owes who" becomes annoying.
 
-```bash
-# npm
-npm install
+Luckily, my housemates never fell for this notorious app.
+We've always gone the traditional, simple way of splitting bills.
 
-# pnpm
-pnpm install
+So…
+fuck Splitwise and welcome to a lightweight, no-BS bill-splitting web app.
 
-# yarn
-yarn install
+## What this is
 
-# bun
-bun install
-```
+A simple, mobile-first web app for splitting bills with friends:
 
-## Development Server
+- No overengineering
+- No social feed
+- No ads
+- No "premium" nonsense
 
-Start the development server on `http://localhost:3000`:
+Just:
 
-```bash
-# npm
-npm run dev
+- what you paid
+- what others owe you
+- what you owe others
 
-# pnpm
-pnpm dev
+That's it.
 
-# yarn
-yarn dev
+## Tech Stack
 
-# bun
-bun run dev
-```
+Built with modern, boring, reliable tools:
 
-## Production
+- Nuxt 3 (Vue)
+- Nitro (server routes)
+- Neon Postgres
+- Drizzle ORM
+- Nuxt Auth / Auth Utils
+- Tailwind CSS
+- Deployed on Vercel
 
-Build the application for production:
+No microservices.
+No unnecessary abstractions.
 
-```bash
-# npm
-npm run build
+## Design Philosophy
 
-# pnpm
-pnpm build
+If a bill-splitting app needs a tutorial, it has already failed.
 
-# yarn
-yarn build
+This app is:
 
-# bun
-bun run build
-```
+- single main screen
+- two tabs:
+  - Owed to me
+  - I owe
+- one big Create Bill button
 
-Locally preview production build:
+Everything else is noise.
 
-```bash
-# npm
-npm run preview
+## Status
 
-# pnpm
-pnpm preview
+Still under active development haiyaa
 
-# yarn
-yarn preview
+Expect rough edges, breaking changes, and opinionated decisions.
 
-# bun
-bun run preview
-```
+## Disclaimer
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+This is not meant to replace Splitwise for everyone.
+If you enjoy spreadsheets, ads, and premium upsells — you're probably happier there.
+
+For everyone else: welcome.
