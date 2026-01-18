@@ -1,70 +1,76 @@
 <template>
-  <div class="min-h-[100dvh] flex flex-col p-8 relative overflow-hidden pb-24 md:pb-8">
-    <!-- Header with avatar -->
-    <div class="mb-6 flex items-center justify-between flex-shrink-0">
-      <h1 class="text-3xl font-semibold tracking-tight">Fuck Splitwise</h1>
-      <div v-if="user" class="flex items-center gap-3">
-        <Button
-          variant="outline"
-          size="icon"
-          :disabled="loading"
-          @click="handleRefresh"
-          class="rounded-full"
-          title="Refresh bills"
-        >
-          <RefreshCw :class="['h-4 w-4', loading && 'animate-spin']" />
-          <span class="sr-only">Refresh bills</span>
-        </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger as-child>
-            <button class="rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-              <Avatar>
-                <AvatarImage v-if="user.image" :src="user.image" :alt="user.name || user.email || 'User'" />
-                <AvatarFallback>
-                  {{ getInitials(user.name || user.email || 'U') }}
-                </AvatarFallback>
-              </Avatar>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" class="w-56">
-            <DropdownMenuLabel>
-              <div class="flex flex-col space-y-1">
-                <p class="text-sm font-medium leading-none">{{ user.name || 'User' }}</p>
-                <p class="text-xs leading-none text-muted-foreground">{{ user.email }}</p>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem @click="handleLogout" class="cursor-pointer">
-              <LogOut class="mr-2 h-4 w-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+  <div class="h-[100dvh] flex flex-col relative">
+    <!-- Fixed Header Section (non-scrollable) -->
+    <div class="flex-shrink-0 px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 md:pt-8 pb-4 sm:pb-6 bg-background">
+      <!-- Title and Avatar -->
+      <div class="mb-4 sm:mb-6 flex items-center justify-between">
+        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">Fuck Splitwise</h1>
+        <div v-if="user" class="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="icon"
+            :disabled="loading"
+            @click="handleRefresh"
+            class="rounded-full"
+            title="Refresh bills"
+          >
+            <RefreshCw :class="['h-4 w-4', loading && 'animate-spin']" />
+            <span class="sr-only">Refresh bills</span>
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <button class="rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                <Avatar>
+                  <AvatarImage v-if="user.image" :src="user.image" :alt="user.name || user.email || 'User'" />
+                  <AvatarFallback>
+                    {{ getInitials(user.name || user.email || 'U') }}
+                  </AvatarFallback>
+                </Avatar>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" class="w-56">
+              <DropdownMenuLabel>
+                <div class="flex flex-col space-y-1">
+                  <p class="text-sm font-medium leading-none">{{ user.name || 'User' }}</p>
+                  <p class="text-xs leading-none text-muted-foreground">{{ user.email }}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem @click="handleLogout" class="cursor-pointer">
+                <LogOut class="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
-
+      
+      <!-- Tabs (non-scrollable) -->
+      <div class="flex-shrink-0">
+        <BillsTabs v-model="activeTab" />
+      </div>
     </div>
-    
-    <div class="flex-shrink-0 mb-6">
-      <BillsTabs v-model="activeTab" />
-    </div>
 
-    <div class="flex-1 overflow-y-auto min-h-0">
-      <BillsList
-        v-if="activeTab === 'owedToMe'"
-        ref="createBillRef"
-        type="owedToMe"
-      />
+    <!-- Scrollable Bill List Area -->
+    <div class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-8">
+      <div class="py-4 sm:py-6">
+        <BillsList
+          v-if="activeTab === 'owedToMe'"
+          ref="createBillRef"
+          type="owedToMe"
+        />
 
-      <BillsList
-        v-else
-        type="iOwe"
-      />
+        <BillsList
+          v-else
+          type="iOwe"
+        />
+      </div>
     </div>
 
     <!-- Floating Action Button (only on owedToMe tab) -->
     <Button
       v-if="activeTab === 'owedToMe'"
-      class="fixed right-6 z-50 rounded-full shadow-lg h-14 w-14 flex items-center justify-center bottom-[calc(env(safe-area-inset-bottom)+1.5rem)] md:absolute md:bottom-8 md:right-8"
+      class="fixed right-4 sm:right-6 md:right-8 bottom-4 sm:bottom-6 md:bottom-8 z-50 rounded-full shadow-lg h-14 w-14 flex items-center justify-center"
       size="icon"
       @click="handleCreate"
     >
@@ -89,7 +95,6 @@ import {
 import { Plus, LogOut, RefreshCw } from "lucide-vue-next";
 import { useBills } from "@/composables/useBills";
 
-// @ts-expect-error - useUserSession is auto-imported from nuxt-auth-utils
 const { user, clear } = useUserSession();
 const activeTab = ref<"owedToMe" | "iOwe">("owedToMe");
 
