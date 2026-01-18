@@ -78,7 +78,6 @@ import { ref, computed, watch } from 'vue'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Edit, Trash2 } from 'lucide-vue-next'
-import { useUserSession } from '#imports'
 
 export interface BillParticipant {
   userId: string

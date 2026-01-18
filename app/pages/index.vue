@@ -4,6 +4,17 @@
     <div class="mb-6 flex items-center justify-between flex-shrink-0">
       <h1 class="text-3xl font-semibold tracking-tight">Fuck Splitwise</h1>
       <div v-if="user" class="flex items-center gap-3">
+        <Button
+          variant="outline"
+          size="icon"
+          :disabled="loading"
+          @click="handleRefresh"
+          class="rounded-full"
+          title="Refresh bills"
+        >
+          <RefreshCw :class="['h-4 w-4', loading && 'animate-spin']" />
+          <span class="sr-only">Refresh bills</span>
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
             <button class="rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
@@ -75,12 +86,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Plus, LogOut } from "lucide-vue-next";
+import { Plus, LogOut, RefreshCw } from "lucide-vue-next";
+import { useBills } from "@/composables/useBills";
 
-const { loggedIn, user, ready, clear } = useUserSession();
+// @ts-expect-error - useUserSession is auto-imported from nuxt-auth-utils
+const { user, clear } = useUserSession();
 const activeTab = ref<"owedToMe" | "iOwe">("owedToMe");
 
+const { loading, fetchBills } = useBills();
 const createBillRef = ref<{ handleCreateClick: () => void } | null>(null)
+
+function handleRefresh() {
+  fetchBills()
+}
 
 function handleCreate() {
   createBillRef.value?.handleCreateClick()

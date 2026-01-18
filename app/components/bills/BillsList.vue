@@ -49,98 +49,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-vue-next'
 import BillCard from './BillCard.vue'
-import type { Bill } from './BillCard.vue'
 import BillDetailsDialog from './BillDetailsDialog.vue'
 import BillForm from './BillForm.vue'
 import type { BillFormData } from './BillForm.vue'
+import { useBills } from '@/composables/useBills'
 
 const props = defineProps<{
   type: 'owedToMe' | 'iOwe'
 }>()
 
-const bills = ref<Bill[]>([])
-const loading = ref(true)
+const { loading, owedToMeBills, iOweBills, fetchBills } = useBills()
+
+const bills = computed(() => {
+  return props.type === 'owedToMe' ? owedToMeBills.value : iOweBills.value
+})
+
 const selectedBillId = ref<string | null>(null)
 const detailsDialogOpen = ref(false)
 const formDialogOpen = ref(false)
 const editingBillId = ref<string | null>(null)
 const formInitialData = ref<BillFormData | undefined>(undefined)
 const isSubmittingBill = ref(false)
-
-async function fetchBills() {
-  loading.value = true
-  try {
-    const response = await $fetch<{ owns: any[], owes: any[] }>('/api/bills')
-    
-    if (props.type === 'owedToMe') {
-      // For bills owed to me, we need to get bills where current user is owner
-      // and join with participants to show who owes
-      bills.value = await Promise.all(
-        response.owns.map(async (bill: any) => {
-          // Get participants for this bill
-          const billDetails = await $fetch<{ participants?: any[], id: string, title: string, totalAmount: string, dueDate: string | null, createdAt: string } | { error: string }>(`/api/bills/${bill.id}`)
-          if ('error' in billDetails) {
-            throw new Error(String(billDetails.error))
-          }
-          const firstParticipant = billDetails.participants?.[0]
-          
-          return {
-            id: billDetails.id,
-            title: billDetails.title,
-            totalAmount: billDetails.totalAmount,
-            dueDate: billDetails.dueDate ? new Date(billDetails.dueDate) : null,
-            createdAt: new Date(billDetails.createdAt),
-            participantName: firstParticipant?.displayName || 'Unknown'
-          }
-        })
-      )
-    } else {
-      // For bills I owe, get bills where current user is a participant
-      const billPromises = response.owes.map(async (participant: any): Promise<Bill | null> => {
-        // Drizzle returns camelCase: billId, userId, amountOwed
-        const billId = participant.billId || participant.bill_id
-        if (!billId) {
-          console.error('Participant record missing billId:', participant)
-          return null
-        }
-        
-        try {
-          const billDetails = await $fetch<{ participants?: any[], id: string, title: string, totalAmount: string, dueDate: string | null, createdAt: string, ownerUserId: string } | { error: string }>(`/api/bills/${billId}`)
-          if ('error' in billDetails) {
-            console.error('Error fetching bill:', billDetails.error)
-            return null
-          }
-          const ownerParticipant = billDetails.participants?.find((p: any) => p.userId === billDetails.ownerUserId)
-          
-          return {
-            id: billDetails.id,
-            title: billDetails.title,
-            totalAmount: billDetails.totalAmount,
-            dueDate: billDetails.dueDate ? new Date(billDetails.dueDate) : null,
-            createdAt: new Date(billDetails.createdAt),
-            participantName: ownerParticipant?.displayName || 'Unknown',
-            amountOwed: String(participant.amountOwed || participant.amount_owed || '0')
-          }
-        } catch (error) {
-          console.error('Failed to fetch bill details:', error)
-          return null
-        }
-      })
-      
-      const results = await Promise.all(billPromises)
-      bills.value = results.filter((bill): bill is Bill => bill !== null)
-    }
-  } catch (error) {
-    console.error('Failed to fetch bills:', error)
-  } finally {
-    loading.value = false
-  }
-}
 
 function handleBillClick(billId: string) {
   selectedBillId.value = billId
@@ -225,14 +157,6 @@ async function handleFormSubmit(data: BillFormData) {
 function handleBillDeleted() {
   fetchBills() // Refresh the list
 }
-
-watch(() => props.type, () => {
-  fetchBills()
-})
-
-onMounted(() => {
-  fetchBills()
-})
 
 defineExpose({
   handleCreateClick
