@@ -2,11 +2,7 @@
   <div class="min-h-screen flex items-center justify-center px-6">
     <div class="w-full max-w-sm">
       <div class="mb-6 flex flex-col items-center gap-4">
-        <img
-          src="/logo.svg"
-          alt="Fuck Splitwise Logo"
-          class="h-16 w-16"
-        />
+        <img src="/logo.svg" alt="Fuck Splitwise Logo" class="h-16 w-16" />
         <h1 class="text-3xl font-semibold tracking-tight text-center">
           Sign in to Fuck Splitwise
         </h1>
@@ -25,33 +21,33 @@
           height="18"
           aria-hidden="true"
         />
-        {{ loading ? "Signing in..." : "Continue with Google" }}
+        {{ loading ? 'Signing in...' : 'Continue with Google' }}
       </button>
 
       <p class="text-sm text-gray-500 text-center">
-        By continuing, you agree to our terms and acknowledge our privacy policy.
+        By continuing, you agree to our terms and acknowledge our privacy
+        policy.
       </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect } from 'vue'
 
-const { loggedIn } = useUserSession();
-const loading = ref(false);
+const { loggedIn } = useUserSession()
+const loading = ref(false)
 
 // If already logged in, bounce to home
 watchEffect(() => {
   if (loggedIn.value) {
-    navigateTo("/");
+    navigateTo('/')
   }
-});
+})
 
 function handleGoogle() {
-  loading.value = true;
+  loading.value = true
   // Redirect to OAuth endpoint (full page redirect for OAuth flow)
-  window.location.href = "/api/auth/google";
+  window.location.href = '/api/auth/google'
 }
 </script>
-

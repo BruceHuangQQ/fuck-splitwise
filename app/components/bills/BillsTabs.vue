@@ -2,7 +2,7 @@
   <div class="relative w-full">
     <div class="grid grid-cols-2 relative border-b border-border">
       <button
-        v-for="(tab, index) in tabs"
+        v-for="tab in tabs"
         :key="tab.value"
         type="button"
         :class="[
@@ -16,7 +16,7 @@
       >
         {{ tab.label }}
       </button>
-      
+
       <!-- Sliding indicator -->
       <div
         class="absolute bottom-0 left-0 h-0.5 bg-primary transition-transform duration-300 ease-in-out"
@@ -46,7 +46,6 @@ const tabs = [
 ]
 
 const activeIndex = computed(() => {
-  return tabs.findIndex(tab => tab.value === props.modelValue)
+  return tabs.findIndex((tab) => tab.value === props.modelValue)
 })
 </script>
-

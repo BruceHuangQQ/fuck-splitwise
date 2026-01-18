@@ -8,7 +8,9 @@
         required
         :disabled="isSubmitting"
       />
-      <FieldDescription>Enter a descriptive name for this bill</FieldDescription>
+      <FieldDescription
+        >Enter a descriptive name for this bill</FieldDescription
+      >
       <FieldError v-if="errors.title">{{ errors.title }}</FieldError>
     </Field>
 
@@ -24,23 +26,23 @@
         :disabled="isSubmitting"
       />
       <FieldDescription>Total amount of the bill</FieldDescription>
-      <FieldError v-if="errors.totalAmount">{{ errors.totalAmount }}</FieldError>
+      <FieldError v-if="errors.totalAmount">{{
+        errors.totalAmount
+      }}</FieldError>
     </Field>
 
     <Field>
       <FieldLabel>Due Date (Optional)</FieldLabel>
-      <Input
-        v-model="formData.dueDate"
-        type="date"
-        :disabled="isSubmitting"
-      />
+      <Input v-model="formData.dueDate" type="date" :disabled="isSubmitting" />
       <FieldDescription>When is this bill due?</FieldDescription>
       <FieldError v-if="errors.dueDate">{{ errors.dueDate }}</FieldError>
     </Field>
 
     <Field>
       <FieldLabel>Participants</FieldLabel>
-      <FieldDescription>Add participants and their share of the bill</FieldDescription>
+      <FieldDescription
+        >Add participants and their share of the bill</FieldDescription
+      >
       <div class="space-y-3 mt-2">
         <div
           v-for="(participant, index) in formData.participants"
@@ -48,24 +50,30 @@
           class="flex gap-2 sm:gap-3 items-end"
         >
           <div class="w-36 sm:w-48 flex-1 sm:flex-none">
-            <Select v-model="participant.userId" required :disabled="isSubmitting">
+            <Select
+              v-model="participant.userId"
+              required
+              :disabled="isSubmitting"
+            >
               <SelectTrigger class="w-full">
                 <SelectValue placeholder="Select user" />
               </SelectTrigger>
-               <SelectContent>
-                 <SelectItem
-                   v-for="user in getAvailableUsers(index)"
-                   :key="user.id"
-                   :value="user.id"
-                 >
-                   <span class="flex items-center gap-2">
-                     <span>{{ user.displayName }}</span>
-                     <span class="text-muted-foreground text-xs truncate max-w-[120px]">
-                       ({{ truncateEmail(user.email) }})
-                     </span>
-                   </span>
-                 </SelectItem>
-               </SelectContent>
+              <SelectContent>
+                <SelectItem
+                  v-for="user in getAvailableUsers(index)"
+                  :key="user.id"
+                  :value="user.id"
+                >
+                  <span class="flex items-center gap-2">
+                    <span>{{ user.displayName }}</span>
+                    <span
+                      class="text-muted-foreground text-xs truncate max-w-[120px]"
+                    >
+                      ({{ truncateEmail(user.email) }})
+                    </span>
+                  </span>
+                </SelectItem>
+              </SelectContent>
             </Select>
           </div>
           <div class="w-24 sm:w-32 flex-shrink-0">
@@ -90,17 +98,19 @@
             <X class="h-4 w-4" />
           </Button>
         </div>
-      <Button
-        type="button"
-        variant="outline"
-        @click="addParticipant"
-        :disabled="isSubmitting"
-      >
-        <Plus class="h-4 w-4 mr-2" />
-        Add Participant
-      </Button>
+        <Button
+          type="button"
+          variant="outline"
+          @click="addParticipant"
+          :disabled="isSubmitting"
+        >
+          <Plus class="h-4 w-4 mr-2" />
+          Add Participant
+        </Button>
       </div>
-      <FieldError v-if="errors.participants">{{ errors.participants }}</FieldError>
+      <FieldError v-if="errors.participants">{{
+        errors.participants
+      }}</FieldError>
     </Field>
 
     <div class="flex justify-end gap-3 pt-4">
@@ -114,9 +124,25 @@
       </Button>
       <Button type="submit" :disabled="isSubmitting">
         <span v-if="isSubmitting" class="flex items-center gap-2">
-          <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <svg
+            class="animate-spin h-4 w-4"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
           </svg>
           {{ isEdit ? 'Updating...' : 'Creating...' }}
         </span>
@@ -128,10 +154,21 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import { Field, FieldLabel, FieldDescription, FieldError } from '@/components/ui/field'
+import {
+  Field,
+  FieldLabel,
+  FieldDescription,
+  FieldError
+} from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { Plus, X } from 'lucide-vue-next'
 
 export interface BillFormData {
@@ -173,21 +210,25 @@ const users = ref<User[]>([])
 
 const isSubmitting = computed(() => props.isSubmitting ?? false)
 
-
 const isEdit = computed(() => props.isEdit ?? false)
 
-watch(() => props.initialData, (newData) => {
-  if (newData) {
-    formData.value = {
-      title: newData.title || '',
-      totalAmount: newData.totalAmount || '',
-      dueDate: newData.dueDate || '',
-      participants: newData.participants.length > 0 
-        ? [...newData.participants] 
-        : [{ userId: '', amountOwed: '' }]
+watch(
+  () => props.initialData,
+  (newData) => {
+    if (newData) {
+      formData.value = {
+        title: newData.title || '',
+        totalAmount: newData.totalAmount || '',
+        dueDate: newData.dueDate || '',
+        participants:
+          newData.participants.length > 0
+            ? [...newData.participants]
+            : [{ userId: '', amountOwed: '' }]
+      }
     }
-  }
-}, { immediate: true })
+  },
+  { immediate: true }
+)
 
 onMounted(async () => {
   try {
@@ -216,11 +257,11 @@ function truncateEmail(email: string, maxLength: number = 20): string {
 function getAvailableUsers(currentIndex: number): User[] {
   // Get all selected user IDs except the current one
   const selectedUserIds = formData.value.participants
-    .map((p, idx) => idx !== currentIndex && p.userId ? p.userId : null)
+    .map((p, idx) => (idx !== currentIndex && p.userId ? p.userId : null))
     .filter((id): id is string => id !== null)
-  
+
   // Return users that haven't been selected in other participant fields
-  return users.value.filter(user => !selectedUserIds.includes(user.id))
+  return users.value.filter((user) => !selectedUserIds.includes(user.id))
 }
 
 function validate(): boolean {
@@ -239,10 +280,13 @@ function validate(): boolean {
     errors.value.participants = 'At least one participant is required'
   }
 
-  const totalParticipantAmount = formData.value.participants.reduce((sum, p) => {
-    const amt = parseFloat(p.amountOwed || '0')
-    return sum + (isNaN(amt) ? 0 : amt)
-  }, 0)
+  const totalParticipantAmount = formData.value.participants.reduce(
+    (sum, p) => {
+      const amt = parseFloat(p.amountOwed || '0')
+      return sum + (isNaN(amt) ? 0 : amt)
+    },
+    0
+  )
 
   if (Math.abs(totalParticipantAmount - amount) > 0.01) {
     errors.value.participants = `Participant amounts (${totalParticipantAmount.toFixed(2)}) must equal total amount (${amount.toFixed(2)})`
@@ -250,9 +294,9 @@ function validate(): boolean {
 
   // Check for duplicate participants
   const userIds = formData.value.participants
-    .map(p => p.userId)
-    .filter(id => id) // Filter out empty strings
-  
+    .map((p) => p.userId)
+    .filter((id) => id) // Filter out empty strings
+
   const uniqueUserIds = new Set(userIds)
   if (userIds.length !== uniqueUserIds.size) {
     errors.value.participants = 'Each participant can only be added once'
@@ -290,4 +334,3 @@ function handleSubmit() {
   emit('submit', { ...formData.value })
 }
 </script>
-

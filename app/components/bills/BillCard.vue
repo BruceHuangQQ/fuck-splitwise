@@ -8,7 +8,10 @@
         <h3 class="text-lg font-semibold text-card-foreground mb-1">
           {{ bill.title }}
         </h3>
-        <p v-if="bill.participantName && type === 'iOwe'" class="text-sm text-muted-foreground">
+        <p
+          v-if="bill.participantName && type === 'iOwe'"
+          class="text-sm text-muted-foreground"
+        >
           Owed to: {{ bill.participantName }}
         </p>
       </div>
@@ -23,15 +26,20 @@
         </div>
       </div>
     </div>
-    
+
     <div class="flex items-center gap-4 text-sm text-muted-foreground">
       <div v-if="bill.dueDate" class="flex items-center gap-1">
         <span>Due:</span>
         <span class="font-medium">{{ formattedDueDate }}</span>
       </div>
-      <div v-if="type === 'iOwe' && bill.amountOwed" class="flex items-center gap-1">
+      <div
+        v-if="type === 'iOwe' && bill.amountOwed"
+        class="flex items-center gap-1"
+      >
         <span>Your share:</span>
-        <span class="font-medium">${{ parseFloat(bill.amountOwed).toFixed(2) }}</span>
+        <span class="font-medium"
+          >${{ parseFloat(bill.amountOwed).toFixed(2) }}</span
+        >
       </div>
     </div>
   </div>
@@ -74,4 +82,3 @@ const formattedDueDate = computed(() => {
   })
 })
 </script>
-

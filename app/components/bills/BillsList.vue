@@ -3,9 +3,18 @@
     <div v-if="loading" class="text-center py-12 text-muted-foreground">
       <p>Loading bills...</p>
     </div>
-    <div v-else-if="bills.length === 0" class="text-center py-12 text-muted-foreground">
+    <div
+      v-else-if="bills.length === 0"
+      class="text-center py-12 text-muted-foreground"
+    >
       <p class="text-lg">No bills found</p>
-      <p class="text-sm mt-2">{{ type === 'owedToMe' ? 'No one owes you money yet.' : 'You don\'t owe anyone yet.' }}</p>
+      <p class="text-sm mt-2">
+        {{
+          type === 'owedToMe'
+            ? 'No one owes you money yet.'
+            : "You don't owe anyone yet."
+        }}
+      </p>
     </div>
     <div v-else class="space-y-4">
       <BillCard
@@ -17,7 +26,6 @@
       />
     </div>
 
-
     <!-- Bill Details Dialog -->
     <BillDetailsDialog
       :bill-id="selectedBillId"
@@ -28,11 +36,19 @@
 
     <!-- Create/Edit Bill Dialog -->
     <Dialog v-model:open="formDialogOpen">
-      <DialogContent class="max-w-[calc(100%-0.5rem)] sm:max-w-lg md:max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+      <DialogContent
+        class="max-w-[calc(100%-0.5rem)] sm:max-w-lg md:max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6"
+      >
         <DialogHeader>
-          <DialogTitle>{{ editingBillId ? 'Edit Bill' : 'Create New Bill' }}</DialogTitle>
+          <DialogTitle>{{
+            editingBillId ? 'Edit Bill' : 'Create New Bill'
+          }}</DialogTitle>
           <DialogDescription>
-            {{ editingBillId ? 'Update the bill details below.' : 'Fill in the details to create a new bill.' }}
+            {{
+              editingBillId
+                ? 'Update the bill details below.'
+                : 'Fill in the details to create a new bill.'
+            }}
           </DialogDescription>
         </DialogHeader>
         <BillForm
@@ -49,7 +65,13 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
 import BillCard from './BillCard.vue'
 import BillDetailsDialog from './BillDetailsDialog.vue'
 import BillForm from './BillForm.vue'
@@ -66,10 +88,10 @@ const props = defineProps<{
   type: 'owedToMe' | 'iOwe'
 }>()
 
-const { 
-  loading, 
-  owedToMeBills, 
-  iOweBills, 
+const {
+  loading,
+  owedToMeBills,
+  iOweBills,
   fetchBills,
   optimisticallyAddBill,
   optimisticallyUpdateBill,
@@ -112,11 +134,21 @@ function handleCreateClick() {
 
 async function handleEdit(billId: string) {
   try {
-    const billDetails = await $fetch<{ title: string, totalAmount: string, dueDate: string | null, participants: any[] } | { error: string }>(`/api/bills/${billId}`)
+    const billDetails = await $fetch<
+      | {
+          title: string
+          totalAmount: string
+          dueDate: string | null
+          participants: any[]
+        }
+      | { error: string }
+    >(`/api/bills/${billId}`)
     if ('error' in billDetails) {
       throw new Error(String(billDetails.error))
     }
-    const dueDateStr: string = billDetails.dueDate ? new Date(billDetails.dueDate).toISOString().split('T')[0] || '' : ''
+    const dueDateStr: string = billDetails.dueDate
+      ? new Date(billDetails.dueDate).toISOString().split('T')[0] || ''
+      : ''
     formInitialData.value = {
       title: billDetails.title,
       totalAmount: billDetails.totalAmount,
@@ -142,7 +174,9 @@ async function handleFormSubmit(data: BillFormData) {
     // Get user info for participants
     const participantsWithUserInfo = await Promise.all(
       data.participants.map(async (p) => {
-        const user = users.value.find(u => u.id === p.userId) || await fetchUserDetails(p.userId)
+        const user =
+          users.value.find((u) => u.id === p.userId) ||
+          (await fetchUserDetails(p.userId))
         if (!user) {
           throw new Error(`User not found: ${p.userId}`)
         }
@@ -150,7 +184,7 @@ async function handleFormSubmit(data: BillFormData) {
           userId: p.userId,
           amountOwed: p.amountOwed,
           email: user.email,
-          displayName: user.displayName,
+          displayName: user.displayName
         }
       })
     )
@@ -167,7 +201,7 @@ async function handleFormSubmit(data: BillFormData) {
         {
           title: data.title,
           totalAmount: data.totalAmount,
-          dueDate: data.dueDate || null,
+          dueDate: data.dueDate || null
         },
         participantsWithUserInfo
       )
@@ -179,7 +213,7 @@ async function handleFormSubmit(data: BillFormData) {
           title: data.title,
           totalAmount: parseFloat(data.totalAmount),
           dueDate: data.dueDate || null,
-          participants: data.participants.map(p => ({
+          participants: data.participants.map((p) => ({
             userId: p.userId,
             amountOwed: parseFloat(p.amountOwed)
           }))
@@ -195,19 +229,27 @@ async function handleFormSubmit(data: BillFormData) {
           ownerUserId: user.value.id,
           title: data.title,
           totalAmount: data.totalAmount,
-          dueDate: data.dueDate || null,
+          dueDate: data.dueDate || null
         },
         participantsWithUserInfo
       )
 
       // Create new bill
-      const response = await $fetch<{ success: boolean; bill: { id: string; createdAt: string; dueDate: string | null; totalAmount: string } }>('/api/bills', {
+      const response = await $fetch<{
+        success: boolean
+        bill: {
+          id: string
+          createdAt: string
+          dueDate: string | null
+          totalAmount: string
+        }
+      }>('/api/bills', {
         method: 'POST',
         body: {
           title: data.title,
           totalAmount: parseFloat(data.totalAmount),
           dueDate: data.dueDate || null,
-          participants: data.participants.map(p => ({
+          participants: data.participants.map((p) => ({
             userId: p.userId,
             amountOwed: parseFloat(p.amountOwed)
           }))
@@ -220,7 +262,7 @@ async function handleFormSubmit(data: BillFormData) {
         replaceTempBillWithRealBill(tempId, response.bill)
       }
     }
-    
+
     formDialogOpen.value = false
     editingBillId.value = null
     formInitialData.value = undefined

@@ -1,4 +1,3 @@
 export default defineEventHandler(() => {
-    return { ok: true, time: new Date().toISOString() };
-  });
-  
+  return { ok: true, time: new Date().toISOString() }
+})

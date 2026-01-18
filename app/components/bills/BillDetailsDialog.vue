@@ -20,7 +20,9 @@
         <div class="grid grid-cols-2 gap-4">
           <div>
             <p class="text-sm text-muted-foreground">Total Amount</p>
-            <p class="text-2xl font-bold">{{ formatCurrency(bill.totalAmount) }}</p>
+            <p class="text-2xl font-bold">
+              {{ formatCurrency(bill.totalAmount) }}
+            </p>
           </div>
           <div>
             <p class="text-sm text-muted-foreground">Due Date</p>
@@ -40,18 +42,19 @@
             >
               <div>
                 <p class="font-medium">{{ participant.displayName }}</p>
-                <p class="text-sm text-muted-foreground">{{ participant.email }}</p>
+                <p class="text-sm text-muted-foreground">
+                  {{ participant.email }}
+                </p>
               </div>
-              <p class="text-lg font-semibold">{{ formatCurrency(participant.amountOwed) }}</p>
+              <p class="text-lg font-semibold">
+                {{ formatCurrency(participant.amountOwed) }}
+              </p>
             </div>
           </div>
         </div>
 
         <div v-if="isOwner" class="flex gap-3 pt-4 border-t">
-          <Button
-            variant="outline"
-            @click="handleEdit"
-          >
+          <Button variant="outline" @click="handleEdit">
             <Edit class="h-4 w-4 mr-2" />
             Edit
           </Button>
@@ -74,12 +77,17 @@
       <AlertDialogHeader>
         <AlertDialogTitle>Delete Bill</AlertDialogTitle>
         <AlertDialogDescription>
-          Are you sure you want to delete this bill? This action cannot be undone.
+          Are you sure you want to delete this bill? This action cannot be
+          undone.
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <AlertDialogAction @click="confirmDelete" :disabled="isDeleting" :class="buttonVariants({ variant: 'destructive' })">
+        <AlertDialogAction
+          @click="confirmDelete"
+          :disabled="isDeleting"
+          :class="buttonVariants({ variant: 'destructive' })"
+        >
           {{ isDeleting ? 'Deleting...' : 'Delete' }}
         </AlertDialogAction>
       </AlertDialogFooter>
@@ -96,7 +104,9 @@
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogAction @click="showErrorDialog = false">OK</AlertDialogAction>
+        <AlertDialogAction @click="showErrorDialog = false"
+          >OK</AlertDialogAction
+        >
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
@@ -104,9 +114,25 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
 import { Edit, Trash2 } from 'lucide-vue-next'
 import { useBills } from '@/composables/useBills'
 
@@ -157,20 +183,27 @@ const isOwner = computed(() => {
   return bill.value && user.value && bill.value.ownerUserId === user.value.id
 })
 
-watch(() => props.billId, async (newBillId) => {
-  if (newBillId && props.open) {
-    await fetchBillDetails(newBillId)
-  } else {
-    bill.value = null
-    error.value = null
-  }
-}, { immediate: true })
+watch(
+  () => props.billId,
+  async (newBillId) => {
+    if (newBillId && props.open) {
+      await fetchBillDetails(newBillId)
+    } else {
+      bill.value = null
+      error.value = null
+    }
+  },
+  { immediate: true }
+)
 
-watch(() => props.open, async (isOpen) => {
-  if (isOpen && props.billId) {
-    await fetchBillDetails(props.billId)
+watch(
+  () => props.open,
+  async (isOpen) => {
+    if (isOpen && props.billId) {
+      await fetchBillDetails(props.billId)
+    }
   }
-})
+)
 
 async function fetchBillDetails(billId: string) {
   loading.value = true
@@ -252,4 +285,3 @@ function close() {
   isOpen.value = false
 }
 </script>
-
