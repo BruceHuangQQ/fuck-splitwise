@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col p-8 relative overflow-hidden">
+  <div class="min-h-[100dvh] flex flex-col p-8 relative overflow-hidden pb-24 md:pb-8">
     <!-- Header with avatar -->
     <div class="mb-6 flex items-center justify-between flex-shrink-0">
       <h1 class="text-3xl font-semibold tracking-tight">Fuck Splitwise</h1>
@@ -53,7 +53,7 @@
     <!-- Floating Action Button (only on owedToMe tab) -->
     <Button
       v-if="activeTab === 'owedToMe'"
-      class="absolute bottom-8 right-8 h-14 w-14 rounded-full shadow-lg z-10"
+      class="fixed right-6 z-50 rounded-full shadow-lg h-14 w-14 flex items-center justify-center bottom-[calc(env(safe-area-inset-bottom)+1.5rem)] md:absolute md:bottom-8 md:right-8"
       size="icon"
       @click="handleCreate"
     >
