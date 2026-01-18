@@ -47,7 +47,7 @@
           :key="index"
           class="flex gap-3 items-end"
         >
-          <div class="w-64">
+          <div class="w-48">
             <Select v-model="participant.userId" required :disabled="isSubmitting">
               <SelectTrigger class="w-full">
                 <SelectValue placeholder="Select user" />
