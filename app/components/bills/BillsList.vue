@@ -8,9 +8,8 @@
       class="text-center py-12 text-muted-foreground"
     >
       <p class="text-lg">No bills yet</p>
-      <p class="text-sm mt-2">
-        Create your first bill to start splitting expenses with friends.
-      </p>
+      <p v-if="type === 'owedToMe'" class="text-sm mt-2">Nobody owes you now</p>
+      <p v-else class="text-sm mt-2">You don't owe anyone now</p>
       <Button
         v-if="type === 'owedToMe'"
         class="mt-6"
@@ -20,7 +19,7 @@
         Create a bill
       </Button>
       <p v-if="type === 'owedToMe'" class="text-xs mt-3 text-muted-foreground">
-        Or click the button on the bottom right
+        Or click the button on the bottom right to start splitting
       </p>
     </div>
     <div v-else class="space-y-4">

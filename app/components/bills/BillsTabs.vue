@@ -16,9 +16,6 @@
       >
         <span class="flex flex-col items-start">
           <span>{{ tab.label }}</span>
-          <span class="text-xs text-muted-foreground">
-            {{ tab.subtitle }}
-          </span>
         </span>
       </button>
 
@@ -47,13 +44,11 @@ defineEmits<{
 
 const tabs = [
   {
-    label: 'Owed To Me',
-    subtitle: 'People who owe you',
+    label: 'People owe me',
     value: 'owedToMe' as const
   },
   {
-    label: 'I Owe',
-    subtitle: 'You need to pay',
+    label: 'I owe people',
     value: 'iOwe' as const
   }
 ]
