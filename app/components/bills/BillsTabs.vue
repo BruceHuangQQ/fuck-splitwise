@@ -48,12 +48,12 @@ defineEmits<{
 const tabs = [
   {
     label: 'Owed To Me',
-    subtitle: 'People who owe you money',
+    subtitle: 'People who owe you',
     value: 'owedToMe' as const
   },
   {
     label: 'I Owe',
-    subtitle: 'Money you need to pay',
+    subtitle: 'You need to pay',
     value: 'iOwe' as const
   }
 ]

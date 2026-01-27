@@ -134,24 +134,6 @@ function optimisticallyAddBill(
   // Add to owns array
   billsData.value.owns = [...billsData.value.owns, newBill]
 
-  // If user is also a participant, add to owes array
-  const userParticipant = participantsWithUserInfo.find(
-    (p) => p.userId !== billData.ownerUserId
-  )
-  if (userParticipant) {
-    billsData.value.owes = [
-      ...billsData.value.owes,
-      {
-        bill: newBill,
-        participant: {
-          billId: tempId,
-          userId: userParticipant.userId,
-          amountOwed: userParticipant.amountOwed
-        }
-      }
-    ]
-  }
-
   // Return rollback function
   return () => {
     if (previousState) {
