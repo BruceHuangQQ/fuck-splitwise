@@ -23,53 +23,66 @@
             </p>
           </div>
         </div>
-        <div v-if="user" class="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="icon"
-            :disabled="loading"
-            @click="handleRefresh"
-            class="rounded-full"
-            title="Refresh bills"
+        <div
+          v-if="user"
+          class="flex flex-col items-end gap-2 pt-2 sm:flex-row sm:items-center sm:gap-10 sm:pt-0"
+        >
+          <div class="flex items-center gap-3">
+            <span
+              :hidden="loading"
+              class="hidden text-muted-foreground text-xs sm:inline"
+              >Updated just now</span
+            >
+            <Button
+              variant="outline"
+              size="icon"
+              :disabled="loading"
+              @click="handleRefresh"
+              class="rounded-full"
+              title="Refresh bills"
+            >
+              <RefreshCw :class="['h-4 w-4', loading && 'animate-spin']" />
+              <span class="sr-only">Refresh bills</span>
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <button
+                  class="rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  <Avatar>
+                    <AvatarImage
+                      v-if="user.image"
+                      :src="user.image"
+                      :alt="user.name || user.email || 'User'"
+                    />
+                    <AvatarFallback>
+                      {{ getInitials(user.name || user.email || 'U') }}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" class="w-56">
+                <DropdownMenuLabel>
+                  <div class="flex flex-col space-y-1">
+                    <p class="text-sm font-medium leading-none">
+                      {{ user.name || 'User' }}
+                    </p>
+                    <p class="text-xs leading-none text-muted-foreground">
+                      {{ user.email }}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem @click="handleLogout" class="cursor-pointer">
+                  <LogOut class="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <span class="text-muted-foreground text-xs sm:hidden"
+            >Updated just now</span
           >
-            <RefreshCw :class="['h-4 w-4', loading && 'animate-spin']" />
-            <span class="sr-only">Refresh bills</span>
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger as-child>
-              <button
-                class="rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                <Avatar>
-                  <AvatarImage
-                    v-if="user.image"
-                    :src="user.image"
-                    :alt="user.name || user.email || 'User'"
-                  />
-                  <AvatarFallback>
-                    {{ getInitials(user.name || user.email || 'U') }}
-                  </AvatarFallback>
-                </Avatar>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" class="w-56">
-              <DropdownMenuLabel>
-                <div class="flex flex-col space-y-1">
-                  <p class="text-sm font-medium leading-none">
-                    {{ user.name || 'User' }}
-                  </p>
-                  <p class="text-xs leading-none text-muted-foreground">
-                    {{ user.email }}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem @click="handleLogout" class="cursor-pointer">
-                <LogOut class="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </div>
 
