@@ -42,7 +42,6 @@
         <span>Due:</span>
         <span class="font-medium">{{ formattedDueDate }}</span>
       </div>
-      <!-- TODO: if i owe, you ower {bill owner} -->
       <div
         v-if="type === 'iOwe' && bill.amountOwed"
         class="flex items-center gap-1"

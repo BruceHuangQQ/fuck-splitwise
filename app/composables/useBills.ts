@@ -36,6 +36,9 @@ const billsData = ref<BillsData | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 const lastFetchTime = ref<Date | null>(null)
+const usersMap = ref<
+  Map<string, { id: string; email: string; displayName: string }>
+>(new Map())
 
 // Stale threshold: 45 seconds (between 30-60s as requested)
 const STALE_THRESHOLD_MS = 45 * 1000
@@ -48,8 +51,16 @@ async function fetchBills() {
   loading.value = true
   error.value = null
   try {
-    const response = await $fetch<BillsData>('/api/bills')
+    // Fetch bills and users in parallel
+    const [response, users] = await Promise.all([
+      $fetch<BillsData>('/api/bills'),
+      $fetch<Array<{ id: string; email: string; displayName: string }>>(
+        '/api/users'
+      )
+    ])
     billsData.value = response
+    // Create a map for quick lookup
+    usersMap.value = new Map(users.map((u) => [u.id, u]))
     lastFetchTime.value = new Date()
   } catch (err: any) {
     error.value = err.data?.error || 'Failed to fetch bills'
@@ -343,16 +354,14 @@ export function useBills() {
           ({ bill, participant }) => participant.userId !== bill.ownerUserId
         )
         .map(({ bill, participant }) => {
-          const ownerParticipant = bill.participants.find(
-            (p) => p.userId === bill.ownerUserId
-          )
+          const ownerName = usersMap.value.get(bill.ownerUserId)?.displayName
           return {
             id: bill.id,
             title: bill.title,
             totalAmount: bill.totalAmount,
             dueDate: bill.dueDate ? new Date(bill.dueDate) : null,
             createdAt: new Date(bill.createdAt),
-            participantName: ownerParticipant?.displayName || 'Unknown',
+            participantName: ownerName,
             amountOwed: participant.amountOwed
           }
         })
