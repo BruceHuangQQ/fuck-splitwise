@@ -7,13 +7,20 @@
       v-else-if="bills.length === 0"
       class="text-center py-12 text-muted-foreground"
     >
-      <p class="text-lg">No bills found</p>
+      <p class="text-lg">No bills yet</p>
       <p class="text-sm mt-2">
-        {{
-          type === 'owedToMe'
-            ? 'No one owes you money yet.'
-            : "You don't owe anyone yet."
-        }}
+        Create your first bill to start splitting expenses with friends.
+      </p>
+      <Button
+        v-if="type === 'owedToMe'"
+        class="mt-6"
+        @click="handleCreateClick"
+      >
+        <Plus class="mr-2 h-4 w-4" />
+        Create a bill
+      </Button>
+      <p v-if="type === 'owedToMe'" class="text-xs mt-3 text-muted-foreground">
+        Or click the button on the bottom right
       </p>
     </div>
     <div v-else class="space-y-4">
@@ -72,6 +79,8 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-vue-next'
 import BillCard from './BillCard.vue'
 import BillDetailsDialog from './BillDetailsDialog.vue'
 import BillForm from './BillForm.vue'
