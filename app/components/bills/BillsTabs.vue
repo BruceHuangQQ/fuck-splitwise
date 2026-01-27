@@ -14,7 +14,12 @@
         ]"
         @click="$emit('update:modelValue', tab.value)"
       >
-        {{ tab.label }}
+        <span class="flex flex-col items-start">
+          <span>{{ tab.label }}</span>
+          <span class="text-xs text-muted-foreground">
+            {{ tab.subtitle }}
+          </span>
+        </span>
       </button>
 
       <!-- Sliding indicator -->
@@ -41,8 +46,16 @@ defineEmits<{
 }>()
 
 const tabs = [
-  { label: 'Owed To Me', value: 'owedToMe' as const },
-  { label: 'I Owe', value: 'iOwe' as const }
+  {
+    label: 'Owed To Me',
+    subtitle: 'People who owe you money',
+    value: 'owedToMe' as const
+  },
+  {
+    label: 'I Owe',
+    subtitle: 'Money you need to pay',
+    value: 'iOwe' as const
+  }
 ]
 
 const activeIndex = computed(() => {

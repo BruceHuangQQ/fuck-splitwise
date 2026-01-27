@@ -12,7 +12,17 @@
           v-if="bill.participantName && type === 'iOwe'"
           class="text-sm text-muted-foreground"
         >
-          Owed to: {{ bill.participantName }}
+          You owe: {{ bill.participantName }}
+        </p>
+        <p
+          v-if="type === 'owedToMe' && bill.participantCount !== undefined"
+          class="text-sm text-muted-foreground"
+        >
+          {{
+            bill.participantCount === 1
+              ? '1 person owes you'
+              : `${bill.participantCount} people owe you`
+          }}
         </p>
       </div>
       <div class="text-right">
@@ -32,6 +42,7 @@
         <span>Due:</span>
         <span class="font-medium">{{ formattedDueDate }}</span>
       </div>
+      <!-- TODO: if i owe, you ower {bill owner} -->
       <div
         v-if="type === 'iOwe' && bill.amountOwed"
         class="flex items-center gap-1"
@@ -56,6 +67,7 @@ export interface Bill {
   createdAt: Date
   participantName?: string
   amountOwed?: string
+  participantCount?: number
 }
 
 const props = defineProps<{

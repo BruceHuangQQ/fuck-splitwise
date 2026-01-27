@@ -318,13 +318,18 @@ export function useBills() {
       const firstParticipant =
         bill.participants.find((p) => p.userId !== bill.ownerUserId) ||
         bill.participants[0]
+      // Count participants excluding the owner
+      const participantCount = bill.participants.filter(
+        (p) => p.userId !== bill.ownerUserId
+      ).length
       return {
         id: bill.id,
         title: bill.title,
         totalAmount: bill.totalAmount,
         dueDate: bill.dueDate ? new Date(bill.dueDate) : null,
         createdAt: new Date(bill.createdAt),
-        participantName: firstParticipant?.displayName || 'Unknown'
+        participantName: firstParticipant?.displayName || 'Unknown',
+        participantCount
       }
     })
   })
