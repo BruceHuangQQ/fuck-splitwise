@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center px-6">
+  <div class="min-h-screen flex items-center justify-center px-6 bg-background">
     <div class="w-full max-w-sm">
       <div class="mb-6 flex flex-col items-center gap-4">
         <img src="/logo.svg" alt="Fuck Splitwise Logo" class="h-16 w-16" />
@@ -8,11 +8,12 @@
         </h1>
       </div>
 
-      <button
+      <Button
         type="button"
-        @click="handleGoogle"
+        variant="outline"
+        class="mb-3 w-full justify-center gap-2"
         :disabled="loading"
-        class="mb-3 inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+        @click="handleGoogle"
       >
         <img
           src="/google.favicon.svg"
@@ -22,7 +23,7 @@
           aria-hidden="true"
         />
         {{ loading ? 'Signing in...' : 'Continue with Google' }}
-      </button>
+      </Button>
 
       <p class="text-sm text-gray-500 text-center">
         By continuing, you agree to our terms and acknowledge our privacy
@@ -34,6 +35,7 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
+import { Button } from '@/components/ui/button'
 
 const { loggedIn } = useUserSession()
 const loading = ref(false)

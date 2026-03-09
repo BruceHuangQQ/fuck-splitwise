@@ -94,7 +94,7 @@
 
     <!-- Scrollable Bill List Area -->
     <div
-      class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-8"
+      class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-8 bg-background"
     >
       <div class="py-4 sm:py-6">
         <BillsList
